@@ -1,0 +1,4 @@
+whitelist.json
+.freebox_token.json
+__pycache__/
+*.pyc
