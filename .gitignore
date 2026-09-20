@@ -1,5 +1,7 @@
 whitelist.json
+whitelist.json.bak
 .freebox_token.json
+.alert_state.json
 .env
 __pycache__/
 *.pyc
