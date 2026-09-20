@@ -4,11 +4,15 @@
 import argparse
 import asyncio
 import json
+import os
 import sys
 from datetime import datetime
 from pathlib import Path
 
+from dotenv import load_dotenv
 from freebox_api import Freepybox
+
+load_dotenv()
 
 APP_DESC = {
     "app_id": "fr.anne-laures.network-watch",
@@ -45,7 +49,15 @@ async def get_current_hosts(fbx: Freepybox) -> list[dict]:
 
 async def connect() -> Freepybox:
     fbx = Freepybox(app_desc=APP_DESC, token_file=str(TOKEN_FILE))
-    await fbx.open(host="mafreebox.freebox.fr", port=443)
+    # "mafreebox.freebox.fr" peut résoudre vers l'infra publique de Free plutôt que la box
+    # locale selon l'environnement réseau (observé sous WSL2). Le certificat TLS de la box
+    # n'étant valide que pour son domaine unique (pas pour l'IP brute), FREEBOX_HOST doit
+    # pointer vers ce domaine (trouvé via /api_version) si le nom générique ne fonctionne
+    # pas depuis ta machine. Ces valeurs sont propres à ta box : elles vivent dans .env
+    # (jamais commité), pas en dur dans ce script.
+    host = os.environ.get("FREEBOX_HOST", "mafreebox.freebox.fr")
+    port = int(os.environ.get("FREEBOX_PORT", "443"))
+    await fbx.open(host=host, port=port)
     return fbx
 
 
