@@ -42,6 +42,23 @@ def extract_mac(host: dict) -> str | None:
     return l2ident.get("id")
 
 
+def extract_last_seen(host: dict) -> tuple[str | None, str | None]:
+    """Retourne (ip, heure_derniere_activite) à partir de la connectivité la plus récente."""
+    connectivities = host.get("l3connectivities") or []
+    if not connectivities:
+        return None, None
+    latest = max(connectivities, key=lambda c: c.get("last_activity") or 0)
+    ip = latest.get("addr")
+    ts = latest.get("last_activity")
+    when = datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S") if ts else None
+    return ip, when
+
+
+def extract_first_seen(host: dict) -> str | None:
+    ts = host.get("first_activity")
+    return datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S") if ts else None
+
+
 async def get_current_hosts(fbx: Freepybox) -> list[dict]:
     hosts = await fbx.lan.get_hosts_list()
     return [h for h in hosts if extract_mac(h)]
@@ -106,12 +123,22 @@ async def cmd_check() -> int:
         print(f"[{timestamp}] OK — aucun appareil inconnu actif ({len(hosts)} appareil(s) vu(s)).")
         return 0
 
+    RED = "\033[91m"
+    RESET = "\033[0m"
+
     print(f"[{timestamp}] ⚠️  {len(unknown)} appareil(s) INCONNU(S) détecté(s) :")
     for host in unknown:
         mac = extract_mac(host)
-        name = host.get("primary_name") or "(sans nom)"
+        name = host.get("primary_name") or f"{RED}INCONNU{RESET}"
         vendor = host.get("vendor_name") or "constructeur inconnu"
-        print(f"  - {name} | MAC: {mac} | {vendor}")
+        ip, last_seen = extract_last_seen(host)
+        ip = ip or "IP inconnue"
+        last_seen = last_seen or "heure inconnue"
+        first_seen = extract_first_seen(host) or "heure inconnue"
+        print(
+            f"  - {name} | MAC: {mac} | {vendor} | IP: {ip} | "
+            f"1ère connexion: {first_seen} | dernière activité: {last_seen}"
+        )
     return 2
 
 

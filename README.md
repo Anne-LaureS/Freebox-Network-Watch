@@ -26,6 +26,22 @@ d'inspection de paquets ici (voir [Limites](#-limites--roadmap) plus bas).
 Aucun service permanent requis — chaque exécution est indépendante, à lancer quand on veut
 vérifier l'état du réseau.
 
+## 📚 Structure du projet
+
+```
+Freebox-Network-Watch/
+├── network_watch.py       # script principal (--learn / --check)
+├── requirements.txt
+├── .env.example           # modèle de config (générique, committé)
+├── .env                   # config réelle : hôte/port de TA box (généré localement, gitignoré)
+├── whitelist.example.json # modèle de liste blanche (adresses factices, committé)
+├── whitelist.json         # liste blanche réelle (tes vraies adresses MAC, généré, gitignoré)
+├── .freebox_token.json    # jeton d'autorisation Freebox (généré au 1er --learn, gitignoré)
+├── logs/
+│   └── check.log          # historique des exécutions cron (généré, gitignoré)
+└── README.md
+```
+
 ## 🧰 Prérequis
 
 - Python 3.10+
@@ -67,14 +83,28 @@ Sortie type si tout est normal :
 [2026-09-20 10:15:00] OK — aucun appareil inconnu actif (12 appareil(s) vu(s)).
 ```
 
-Sortie type si un appareil inconnu est détecté :
+Sortie type si un appareil inconnu est détecté (nom en rouge si l'appareil n'en a pas) :
 ```
 [2026-09-20 10:15:00] ⚠️  1 appareil(s) INCONNU(S) détecté(s) :
-  - (sans nom) | MAC: 3C:5A:B4:xx:xx:xx | Espressif Inc.
+  - INCONNU | MAC: 3C:5A:B4:xx:xx:xx | Espressif Inc. | IP: 192.168.1.87 | 1ère connexion: 2026-09-20 10:12:03 | dernière activité: 2026-09-20 10:14:51
 ```
 
 Code de sortie `2` si un appareil inconnu est trouvé — permet de brancher `--check` sur une
 tâche planifiée (cron) et de réagir sur le code retour (notification, log, etc.).
+
+## ⏱️ Vérification automatique (cron)
+
+```bash
+crontab -e
+```
+
+Ajouter (vérifie toutes les 15 minutes, journalise dans `logs/check.log`) :
+```
+*/15 * * * * cd /chemin/vers/Freebox-Network-Watch && /usr/bin/python3 network_watch.py --check >> logs/check.log 2>&1
+```
+
+⚠️ Comme le reste de ce projet, ça ne tourne que quand la machine qui héberge le script est
+allumée — pas un service permanent 24/7 sans matériel dédié toujours actif.
 
 ## ⚠️ Limites & roadmap
 

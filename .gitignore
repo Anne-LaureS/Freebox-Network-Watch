@@ -3,3 +3,4 @@ whitelist.json
 .env
 __pycache__/
 *.pyc
+logs/
