@@ -78,14 +78,14 @@ réutilisé pour les exécutions suivantes.
 python3 network_watch.py --learn
 ```
 
-<img src="screenshots/terminal-learn.png" width="100%" alt="Exécution réelle de --learn" />
+<img src="screenshots/terminal-learn.png" alt="Exécution réelle de --learn" />
 
 ```bash
 # Vérifier l'état du réseau
 python3 network_watch.py --check
 ```
 
-<img src="screenshots/terminal-check.png" width="100%" alt="Exécution réelle de --check" />
+<img src="screenshots/terminal-check.png" alt="Exécution réelle de --check" />
 
 Sortie type si tout est normal :
 ```
