@@ -39,6 +39,9 @@ Freebox-Network-Watch/
 ├── .freebox_token.json    # jeton d'autorisation Freebox (généré au 1er --learn, gitignoré)
 ├── logs/
 │   └── check.log          # historique des exécutions cron (généré, gitignoré)
+├── screenshots/
+│   ├── terminal-learn-check.png
+│   └── terminal-check.png
 └── README.md
 ```
 
@@ -79,7 +82,9 @@ python3 network_watch.py --check
 ```
 
 <p align="center">
-  <img src="screenshots/terminal-output.png" width="80%" alt="Exécution réelle de --learn puis --check" />
+  <img src="screenshots/terminal-learn-check.png" width="80%" alt="Exécution réelle de --learn puis --check, commandes complètes" />
+  <br/>
+  <img src="screenshots/terminal-check.png" width="60%" alt="Résultat de --check" />
 </p>
 
 Sortie type si tout est normal :
