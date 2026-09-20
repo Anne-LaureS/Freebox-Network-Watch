@@ -38,7 +38,12 @@ vérifier l'état du réseau.
 git clone https://github.com/Anne-LaureS/Freebox-Network-Watch.git
 cd Freebox-Network-Watch
 pip install -r requirements.txt
+cp .env.example .env
 ```
+
+`.env` (jamais commité) contient l'adresse de connexion à ta box — les valeurs par défaut
+(`mafreebox.freebox.fr:443`) fonctionnent pour la plupart des configurations réseau. Voir les
+commentaires dans `.env.example` si ça ne fonctionne pas depuis ta machine (ex: sous WSL2).
 
 ## 🔐 Première autorisation
 
