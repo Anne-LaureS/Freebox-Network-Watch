@@ -78,6 +78,10 @@ python3 network_watch.py --learn
 python3 network_watch.py --check
 ```
 
+<p align="center">
+  <img src="screenshots/terminal-output.png" width="80%" alt="Exécution réelle de --learn puis --check" />
+</p>
+
 Sortie type si tout est normal :
 ```
 [2026-09-20 10:15:00] OK — aucun appareil inconnu actif (12 appareil(s) vu(s)).
