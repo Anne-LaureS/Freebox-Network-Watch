@@ -40,7 +40,7 @@ Freebox-Network-Watch/
 ├── logs/
 │   └── check.log          # historique des exécutions cron (généré, gitignoré)
 ├── screenshots/
-│   ├── terminal-learn-check.png
+│   ├── terminal-learn.png
 │   └── terminal-check.png
 └── README.md
 ```
@@ -76,16 +76,16 @@ réutilisé pour les exécutions suivantes.
 ```bash
 # Première fois : initialise la liste blanche avec les appareils actuellement connus
 python3 network_watch.py --learn
+```
 
+<img src="screenshots/terminal-learn.png" width="100%" alt="Exécution réelle de --learn" />
+
+```bash
 # Vérifier l'état du réseau
 python3 network_watch.py --check
 ```
 
-<p align="center">
-  <img src="screenshots/terminal-learn-check.png" width="80%" alt="Exécution réelle de --learn puis --check, commandes complètes" />
-  <br/>
-  <img src="screenshots/terminal-check.png" width="60%" alt="Résultat de --check" />
-</p>
+<img src="screenshots/terminal-check.png" width="100%" alt="Exécution réelle de --check" />
 
 Sortie type si tout est normal :
 ```
