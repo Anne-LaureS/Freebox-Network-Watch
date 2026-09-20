@@ -30,13 +30,15 @@ vérifier l'état du réseau.
 
 ```
 Freebox-Network-Watch/
-├── network_watch.py       # script principal (--learn / --check)
+├── network_watch.py       # script principal (--learn / --check / --list / --allow / --remove)
 ├── requirements.txt
 ├── .env.example           # modèle de config (générique, committé)
 ├── .env                   # config réelle : hôte/port de TA box (généré localement, gitignoré)
 ├── whitelist.example.json # modèle de liste blanche (adresses factices, committé)
 ├── whitelist.json         # liste blanche réelle (tes vraies adresses MAC, généré, gitignoré)
+├── whitelist.json.bak     # copie de sécurité avant chaque modification (généré, gitignoré)
 ├── .freebox_token.json    # jeton d'autorisation Freebox (généré au 1er --learn, gitignoré)
+├── .alert_state.json      # appareils inconnus déjà signalés (généré, gitignoré)
 ├── logs/
 │   └── check.log          # historique des exécutions cron (généré, gitignoré)
 ├── screenshots/
@@ -98,6 +100,29 @@ Sortie type si un appareil inconnu est détecté (nom en rouge si l'appareil n'e
   - INCONNU | MAC: 3C:5A:B4:xx:xx:xx | Espressif Inc. | IP: 192.168.1.87 | 1ère connexion: 2026-09-20 10:12:03 | dernière activité: 2026-09-20 10:14:51
 ```
 
+### Gérer la liste blanche
+
+```bash
+# Voir la liste blanche, avec l'état actuel de chaque appareil (actifs en premier)
+python3 network_watch.py --list
+
+# Autoriser un appareil (le nom est repris de la Freebox si --name est omis)
+python3 network_watch.py --allow AA:BB:CC:DD:EE:FF --name "Imprimante"
+
+# Retirer un appareil, par adresse MAC ou par nom (entre guillemets s'il contient des espaces)
+python3 network_watch.py --remove AA:BB:CC:DD:EE:FF
+python3 network_watch.py --remove "Imprimante"
+```
+
+Si un nom correspond à plusieurs appareils, rien n'est retiré : les candidats sont listés, et on
+précise le nom complet ou l'adresse MAC. Les adresses MAC sont acceptées en majuscules ou
+minuscules, avec `:` ou `-`. Avant chaque
+modification, l'ancienne liste est copiée dans `whitelist.json.bak` (non versionné, comme la liste).
+
+⚠️ `--learn` reprend **tout ce que la Freebox a déjà vu**, y compris des appareils qui ne sont plus
+connectés. Relire `--list` (les appareils « inactif ») et retirer avec `--remove` ceux qu'on ne
+reconnaît pas.
+
 Code de sortie `2` si un appareil inconnu est trouvé — permet de brancher `--check` sur une
 tâche planifiée (cron) et de réagir sur le code retour (notification, log, etc.).
 
@@ -111,6 +136,20 @@ Ajouter (vérifie toutes les 15 minutes, journalise dans `logs/check.log`) :
 ```
 */15 * * * * cd /chemin/vers/Freebox-Network-Watch && /usr/bin/python3 network_watch.py --check >> logs/check.log 2>&1
 ```
+
+### 🔔 Alertes
+
+Quand `--check` (donc le cron) détecte un appareil inconnu **nouveau**, une notification Windows
+s'affiche sur le PC (toast envoyé depuis WSL avec PowerShell). Aucun service ni mot de passe.
+
+- **Une seule alerte par appareil** : un inconnu qui reste connecté ne redéclenche pas de
+  notification toutes les 15 minutes. S'il disparaît puis revient, il est signalé de nouveau. L'état est
+  gardé dans `.alert_state.json` (gitignoré). Le code de sortie reste `2` tant qu'un inconnu est actif.
+- Le nom d'un appareil est choisi par son propriétaire : il est transmis à PowerShell par variables
+  d'environnement (jamais dans la commande) et le texte du toast est échappé.
+- `python3 network_watch.py --test-alert` envoie une notification de test, sans interroger la Freebox.
+- `--check --no-notify` désactive la notification pour une exécution manuelle.
+- Si la notification est impossible (par exemple hors WSL), la raison est écrite dans le journal.
 
 ⚠️ Comme le reste de ce projet, ça ne tourne que quand la machine qui héberge le script est
 allumée — pas un service permanent 24/7 sans matériel dédié toujours actif.
