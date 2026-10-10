@@ -3,6 +3,7 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![Freebox OS API](https://img.shields.io/badge/Freebox_OS_API-0d1117)
 ![Home Network Security](https://img.shields.io/badge/Home_Network_Security-blue)
+[![Licence MIT](https://img.shields.io/badge/licence-MIT-green)](LICENSE)
 
 ---
 
@@ -167,3 +168,10 @@ allumée — pas un service permanent 24/7 sans matériel dédié toujours actif
 - **V2 envisagée** : scan WiFi ponctuel en mode moniteur (Kismet/aircrack-ng via un adaptateur
   USB dédié) pour détecter les points d'accès pirates et les attaques de désauthentification —
   complémentaire à la détection d'appareils inconnus faite ici.
+
+---
+
+## 📜 Licence
+
+Publié sous licence [MIT](LICENSE) © 2026 Anne-LaureS : réutilisation libre, à condition de conserver la
+mention de copyright. Fourni « tel quel », sans garantie.
